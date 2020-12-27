@@ -1,16 +1,16 @@
 import { Lobby } from "boardgame.io/react";
 import { CloseIcon } from '@chakra-ui/icons';
 import { Button, HStack, Stack } from "@chakra-ui/react";
-import { SkyJo } from "../../game/skyjo";
-import { ColourModeSwitcher } from "../../ColourModeSwitcher";
-import { SkyJoGameBoard } from "../SkyJoGameBoard";
+import { SkyJo } from "../game/skyjo";
+import { ColourModeSwitcher } from "../ColourModeSwitcher";
+import { SkyJoGameBoard } from "./SkyJoGameBoard";
 import {
   LobbyPhases,
   GameLobbyRouter,
   GameLobbyRoute,
-} from "./GameLobbyRouter";
-import { PhaseEnter } from "./PhaseEnter";
-import { PhaseList } from "./PhaseList";
+} from "./GameLobby/GameLobbyRouter";
+import { PhaseEnter } from "./GameLobby/PhaseEnter";
+import { PhaseList } from "./GameLobby/PhaseList";
 
 export const GameLobby = () => (
   <Lobby
@@ -53,7 +53,12 @@ export const GameLobby = () => (
                 gameComponents={gameComponents}
                 playerName={playerName}
                 onCreateMatch={handleCreateMatch}
+                onClickLeave={handleLeaveMatch}
+                onClickJoin={handleJoinMatch}
+                onClickPlay={handleStartMatch}
               />
+            </GameLobbyRoute>
+            <GameLobbyRoute route={LobbyPhases.PLAY}>
             </GameLobbyRoute>
           </GameLobbyRouter>
         </Stack>

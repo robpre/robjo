@@ -11,7 +11,13 @@ import {
   HStack,
   Select,
   Stack,
+  Table,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 
 const makeRange = (min, max) => {
@@ -80,12 +86,82 @@ const LobbyCreateMatchForm = ({ games, onCreateMatch }) => {
   );
 };
 
+const MatchButton = ({ match, playerName, onClickLeave, onClickJoin, onClickPlay }) => {
+  const playerSeat = match.players.find(
+    player => player.name === playerName
+  );
+  const freeSeat = match.players.find(player => !player.name);
+  const leaveButton = (
+    <Button
+      type="button"
+      onClick={() => onClickLeave(match.gameName, match.matchID)}
+    >
+      Leave
+    </Button>
+  );
+
+  if (playerSeat && freeSeat) {
+    // already seated: waiting for match to start
+    return leaveButton;
+  }
+  if (freeSeat) {
+    // at least 1 seat is available
+    return (
+      <Button
+        type="button"
+        onClick={() =>
+          onClickJoin(match.gameName, match.matchID, '' + freeSeat.id)
+        }
+      >
+        Join
+      </Button>
+    );
+  }
+  // match is full
+  if (playerSeat) {
+    return (
+      <HStack spacing={4}>
+        <Button
+          type="button"
+          onClick={() =>
+            onClickPlay(match.gameName, {
+              matchID: match.matchID,
+              playerID: '' + playerSeat.id,
+              numPlayers: match.players.length,
+            })
+          }
+        >
+          Play
+        </Button>
+        {leaveButton}
+      </HStack>
+    );
+  }
+  // allow spectating
+  return (
+    <Button
+      type="button"
+      onClick={() =>
+        onClickPlay(match.gameName, {
+          matchID: match.matchID,
+          numPlayers: match.players.length,
+        })
+      }
+    >
+      Spectate
+    </Button>
+  );
+}
+
 export const PhaseList = ({
   playerName,
   errorMsg,
   gameComponents,
   onCreateMatch,
   matches,
+  onClickLeave,
+  onClickJoin,
+  onClickPlay,
 }) => (
   <Stack spacing={2} justifyContent="space-between" flex="1">
     <Stack spacing={2}>
@@ -99,11 +175,42 @@ export const PhaseList = ({
           onCreateMatch={(x, y) => onCreateMatch(x, y)}
         />
       </Box>
-      <Divider pr={2} pl={2} spacing={2} />
+      <Divider mr={2} ml={2} spacing={2} />
       <Text pr={2} pl={2} textAlign="left">Join a match:</Text>
-      {matches.map((match) => (
-        <Box>hi</Box>
-      ))}
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>game name</Th>
+            <Th>status</Th>
+            <Th>players</Th>
+            <Th>join</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {matches.map((m) => (
+            <Tr key={m.matchID}>
+              <Td>{m.gameName}</Td>
+              <Td>{m.players.find(p => !p.name) ? 'OPEN' : 'RUNNING'}</Td>
+              <Td>
+                <Text>
+                  {m.players.map(p => (
+                    p.name || '[free]'
+                  )).join(', ')}
+                </Text>
+              </Td>
+              <Td>
+                <MatchButton
+                  match={m}
+                  playerName={playerName}
+                  onClickLeave={onClickLeave}
+                  onClickJoin={onClickJoin}
+                  onClickPlay={onClickPlay}
+                />
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
     </Stack>
     <Stack spacing={1}>
       {errorMsg && (

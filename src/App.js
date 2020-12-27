@@ -6,7 +6,7 @@ import {
   theme,
 } from '@chakra-ui/react';
 
-import { GameLobby } from "./components/GameLobby/GameLobby";
+import { GameLobby } from "./components/GameLobby";
 
 function App() {
   return (
