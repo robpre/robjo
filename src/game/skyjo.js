@@ -1,7 +1,11 @@
 import { PlayerView } from 'boardgame.io/core';
 import { newDeck } from './cards';
+import { deal } from './moves/deal';
 
 export const SkyJo = {
+  minPlayers: 2,
+  maxPlayers: 6,
+  name: 'skyjo',
   playerView: PlayerView.STRIP_SECRETS,
   setup: (ctx) => ({
     secret: {
@@ -10,22 +14,18 @@ export const SkyJo = {
     boards: {},
     scores: {},
   }),
-  // phases: {
-  //   start: {
-  //     start: true,
-  //     moves: {
-  //     },
-  //   },
-  // },
-  moves: {
-    deal: {
-      move: (G, ctx) => {
-        debugger;
-        // G.secret.deck;
-        // G.boards;
+  phases: {
+    startup: {
+      start: true,
+      moves: {
+        deal,
       },
-      undoable: true,
-      client: false,
+      next: 'reveal',
+    },
+    reveal: {
+      moves: {
+
+      },
     },
   },
 };

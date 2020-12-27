@@ -1,0 +1,11 @@
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.heading {
+  font-size: 2rem;
+  padding: 50px 50px 0;
+}
