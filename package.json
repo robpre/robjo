@@ -1,0 +1,12 @@
+{
+  "name": "skyjo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Rob Preus-MacLaren <robpremac@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "boardgame.io": "^0.42.2",
+    "esm": "^3.2.25"
+  }
+}
