@@ -1,14 +1,14 @@
-import { Client } from 'boardgame.io/react';
-import { SocketIO, Local } from 'boardgame.io/multiplayer';
-import { SkyJo } from '../game/skyjo';
-import { SkyJoGameBoard } from './SkyJoGameBoard';
+import { Client } from "boardgame.io/react";
+import { SocketIO, Local } from "boardgame.io/multiplayer";
+import { SkyJo } from "../game/skyjo";
+import { SkyJoGameBoard } from "./SkyJoGameBoard";
 
 const local = new Local({
   // persist: true,
 });
 
 const socket = new SocketIO({
-  server: `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`
+  server: `${window.location.protocol}//${window.location.hostname}:${window.location.port}/`,
 });
 
 const LocalComponent = new Client({

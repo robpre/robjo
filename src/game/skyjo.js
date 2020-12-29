@@ -1,7 +1,7 @@
-import { PlayerView, TurnOrder } from 'boardgame.io/core';
-import { addCards, EMPTY_CARD, HIDDEN_CARD, newDeck } from './cards';
-import { deal } from './moves/deal';
-import { reveal } from './moves/reveal';
+import { PlayerView, TurnOrder } from "boardgame.io/core";
+import { addCards, EMPTY_CARD, HIDDEN_CARD, newDeck } from "./cards";
+import { deal } from "./moves/deal";
+import { reveal } from "./moves/reveal";
 
 const swapActive = (G, ctx, i) => {
   const oldCard = G.secret.hands[ctx.currentPlayer][i];
@@ -13,7 +13,7 @@ const swapActive = (G, ctx, i) => {
   ctx.events.endTurn();
 };
 
-const ssr = move => ({
+const ssr = (move) => ({
   move,
   client: false,
 });
@@ -21,7 +21,7 @@ const ssr = move => ({
 export const SkyJo = {
   minPlayers: 2,
   maxPlayers: 6,
-  name: 'skyjo',
+  name: "skyjo",
   disableUndo: true,
   playerView: PlayerView.STRIP_SECRETS,
   setup: (ctx) => ({
@@ -36,9 +36,10 @@ export const SkyJo = {
     active: {},
     choseRandom: false,
   }),
-  endIf: (G) => Object.entries(G.scores).some(([playerID, score]) => {
-    return score >= 100;
-  }),
+  endIf: (G) =>
+    Object.entries(G.scores).some(([playerID, score]) => {
+      return score >= 100;
+    }),
   turn: {
     order: TurnOrder.CONTINUE,
   },
@@ -48,11 +49,11 @@ export const SkyJo = {
       moves: {
         deal,
       },
-      next: 'reveal',
+      next: "reveal",
     },
     reveal: {
       onBegin: (G, ctx) => {
-        ctx.events.setActivePlayers({ all: 'reveal2', moveLimit: 2 });
+        ctx.events.setActivePlayers({ all: "reveal2", moveLimit: 2 });
       },
       turn: {
         order: TurnOrder.CONTINUE,
@@ -62,25 +63,32 @@ export const SkyJo = {
           },
         },
         endIf: (G, ctx) => {
-          const everyRevealed = Object.entries(G.boards).every(([id, cards]) => {
-            const countNonHidden = cards.reduce((c, n) => c + (n !== HIDDEN_CARD ? 1 : 0), 0);
+          const everyRevealed = Object.entries(G.boards).every(
+            ([id, cards]) => {
+              const countNonHidden = cards.reduce(
+                (c, n) => c + (n !== HIDDEN_CARD ? 1 : 0),
+                0
+              );
 
-            return countNonHidden === 2;
-          });
+              return countNonHidden === 2;
+            }
+          );
 
           if (!everyRevealed) {
             return false;
           }
 
-          const [next] = Object.entries(G.boards).reduce(([highestID, highestCards], [playerID, cards]) => {
-            if (addCards(cards) > addCards(highestCards)) {
-              return [playerID, cards];
+          const [next] = Object.entries(G.boards).reduce(
+            ([highestID, highestCards], [playerID, cards]) => {
+              if (addCards(cards) > addCards(highestCards)) {
+                return [playerID, cards];
+              }
+
+              return [highestID, highestCards];
             }
+          );
 
-            return [highestID, highestCards];
-          });
-
-          console.log("setting next player to ", next)
+          console.log("setting next player to ", next);
           return { next };
         },
         onEnd: (G, ctx) => {
@@ -91,7 +99,7 @@ export const SkyJo = {
     },
     cycle: {
       onBegin: (G, ctx) => {
-        ctx.events.setActivePlayers({ currentPlayer: 'chooseActive' });
+        ctx.events.setActivePlayers({ currentPlayer: "chooseActive" });
       },
       turn: {
         order: TurnOrder.CONTINUE,
@@ -100,7 +108,7 @@ export const SkyJo = {
           // calculate columns of the same value
           const cards = G.boards[ctx.currentPlayer];
 
-          const isV = v => v !== HIDDEN_CARD && v !== EMPTY_CARD;
+          const isV = (v) => v !== HIDDEN_CARD && v !== EMPTY_CARD;
           for (let i = 0; i < 4; i++) {
             const x = cards[i];
             const y = cards[i + 4];
@@ -122,12 +130,12 @@ export const SkyJo = {
             moves: {
               chooseRandom: ssr((G, ctx) => {
                 G.active[ctx.currentPlayer] = G.secret.deck.pop();
-                ctx.events.setActivePlayers({ currentPlayer: 'discardOrSwap' });
+                ctx.events.setActivePlayers({ currentPlayer: "discardOrSwap" });
               }),
               chooseDiscard: ssr((G, ctx) => {
                 G.active[ctx.currentPlayer] = G.discard;
                 G.discard = EMPTY_CARD;
-                ctx.events.setActivePlayers({ currentPlayer: 'swap' });
+                ctx.events.setActivePlayers({ currentPlayer: "swap" });
               }),
             },
           },
@@ -136,9 +144,9 @@ export const SkyJo = {
               swap: ssr(swapActive),
               discard: ssr((G, ctx) => {
                 G.discard = G.active[ctx.currentPlayer];
-                ctx.events.setActivePlayers({ currentPlayer: 'turnOver' });
+                ctx.events.setActivePlayers({ currentPlayer: "turnOver" });
               }),
-            }
+            },
           },
           swap: {
             moves: {
@@ -148,16 +156,18 @@ export const SkyJo = {
           turnOver: {
             moves: {
               flip: ssr((G, ctx, i) => {
-                G.boards[ctx.currentPlayer][i] = G.secret.hands[ctx.currentPlayer][i];
+                G.boards[ctx.currentPlayer][i] =
+                  G.secret.hands[ctx.currentPlayer][i];
                 ctx.events.endTurn();
               }),
             },
           },
         },
       },
-      endIf: (G, ctx) => Object.entries(G.boards).some(([playerID, cards]) => {
-        return cards.every(v => v !== HIDDEN_CARD);
-      }),
+      endIf: (G, ctx) =>
+        Object.entries(G.boards).some(([playerID, cards]) => {
+          return cards.every((v) => v !== HIDDEN_CARD);
+        }),
       onEnd: (G, ctx) => {
         Object.entries(G.secret.hands).forEach(([playerID, cards]) => {
           G.scores[playerID] += addCards(cards);

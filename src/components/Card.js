@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, VisuallyHidden } from '@chakra-ui/react';
-import { EMPTY_CARD, HIDDEN_CARD } from '../game/cards';
+import React from "react";
+import { Box, VisuallyHidden } from "@chakra-ui/react";
+import { EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
 
 const backgroundPicker = (value) => {
   switch (value) {
@@ -26,7 +26,7 @@ const backgroundPicker = (value) => {
   }
 };
 
-export const Card = ({ value, onClick = () => { }, disabled }) => (
+export const Card = ({ value, onClick = () => {}, disabled }) => (
   <Box
     onClick={onClick}
     background={backgroundPicker(value)}
@@ -40,10 +40,16 @@ export const Card = ({ value, onClick = () => { }, disabled }) => (
     alignItems="center"
   >
     <VisuallyHidden>
-      <button type="button" disabled={disabled} onClick={evt => {
-        evt.stopPropagation();
-        onClick(evt);
-      }}>click to select card with value</button>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={(evt) => {
+          evt.stopPropagation();
+          onClick(evt);
+        }}
+      >
+        click to select card with value
+      </button>
     </VisuallyHidden>
     <Box
       w="50PX"

@@ -86,11 +86,15 @@ const LobbyCreateMatchForm = ({ games, onCreateMatch }) => {
   );
 };
 
-const MatchButton = ({ match, playerName, onClickLeave, onClickJoin, onClickPlay }) => {
-  const playerSeat = match.players.find(
-    player => player.name === playerName
-  );
-  const freeSeat = match.players.find(player => !player.name);
+const MatchButton = ({
+  match,
+  playerName,
+  onClickLeave,
+  onClickJoin,
+  onClickPlay,
+}) => {
+  const playerSeat = match.players.find((player) => player.name === playerName);
+  const freeSeat = match.players.find((player) => !player.name);
   const leaveButton = (
     <Button
       type="button"
@@ -110,7 +114,7 @@ const MatchButton = ({ match, playerName, onClickLeave, onClickJoin, onClickPlay
       <Button
         type="button"
         onClick={() =>
-          onClickJoin(match.gameName, match.matchID, '' + freeSeat.id)
+          onClickJoin(match.gameName, match.matchID, "" + freeSeat.id)
         }
       >
         Join
@@ -126,7 +130,7 @@ const MatchButton = ({ match, playerName, onClickLeave, onClickJoin, onClickPlay
           onClick={() =>
             onClickPlay(match.gameName, {
               matchID: match.matchID,
-              playerID: '' + playerSeat.id,
+              playerID: "" + playerSeat.id,
               numPlayers: match.players.length,
             })
           }
@@ -151,7 +155,7 @@ const MatchButton = ({ match, playerName, onClickLeave, onClickJoin, onClickPlay
       Spectate
     </Button>
   );
-}
+};
 
 export const PhaseList = ({
   playerName,
@@ -176,7 +180,9 @@ export const PhaseList = ({
         />
       </Box>
       <Divider mr={2} ml={2} spacing={2} />
-      <Text pr={2} pl={2} textAlign="left">Join a match:</Text>
+      <Text pr={2} pl={2} textAlign="left">
+        Join a match:
+      </Text>
       <Table>
         <Thead>
           <Tr>
@@ -190,12 +196,10 @@ export const PhaseList = ({
           {matches.map((m) => (
             <Tr key={m.matchID}>
               <Td>{m.gameName}</Td>
-              <Td>{m.players.find(p => !p.name) ? 'OPEN' : 'RUNNING'}</Td>
+              <Td>{m.players.find((p) => !p.name) ? "OPEN" : "RUNNING"}</Td>
               <Td>
                 <Text>
-                  {m.players.map(p => (
-                    p.name || '[free]'
-                  )).join(', ')}
+                  {m.players.map((p) => p.name || "[free]").join(", ")}
                 </Text>
               </Td>
               <Td>

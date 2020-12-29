@@ -18,13 +18,14 @@ export const newDeck = () => [
   ...makeSuit(10, 12),
 ];
 
-export const HIDDEN_CARD = '?';
-export const EMPTY_CARD = '-';
+export const HIDDEN_CARD = "?";
+export const EMPTY_CARD = "-";
 
-export const addCards = cards => cards.reduce((total, v) => {
-  if (v === HIDDEN_CARD || v === EMPTY_CARD) {
-    return total;
-  }
+export const addCards = (cards) =>
+  cards.reduce((total, v) => {
+    if (v === HIDDEN_CARD || v === EMPTY_CARD) {
+      return total;
+    }
 
-  return total + parseInt(v, 10);
-}, 0);
+    return total + parseInt(v, 10);
+  }, 0);
