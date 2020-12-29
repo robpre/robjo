@@ -37,7 +37,7 @@ function App() {
       {process.env.NODE_ENV === "development" && <Global styles={{ "body": {marginRight: 305}}} />}
       <Box h="100%" textAlign="center" fontSize="xl">
         <Router>
-          <GameLobby path="/" />
+          <GameLobby path="/*" />
           <DevGame path="/dev" />
         </Router>
       </Box>
