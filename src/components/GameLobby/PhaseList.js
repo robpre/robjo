@@ -41,7 +41,7 @@ const LobbyCreateMatchForm = ({ games, onCreateMatch }) => {
       as="form"
       onSubmit={(e) => {
         e.preventDefault();
-        onCreateMatch(game.name, numPlayers);
+        onCreateMatch(game.name, parseInt(numPlayers));
       }}
     >
       <HStack spacing={2}>

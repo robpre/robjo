@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, Button, HStack, Stack, VisuallyHidden } from '@chakra-ui/react';
+import React from "react";
+import { HStack, Stack } from "@chakra-ui/react";
+import { Card } from "../Card";
 
 const sliceRows = (cards) => {
   const output = [];
@@ -10,36 +11,23 @@ const sliceRows = (cards) => {
   }
 
   return output;
-}
-
-const Card = ({ value, onClick, disabled }) => (
-  <Box
-    onClick={onClick}
-    color="black"
-    background="white"
-    borderRadius="15%"
-    height="100px"
-    width="50px"
-    cursor="pointer"
-  >
-    <VisuallyHidden>
-      <button type="button" disabled={disabled} onClick={evt => {
-        evt.stopPropagation();
-        onClick(evt);
-      }}>click to select card with value</button>
-    </VisuallyHidden>
-    {value}
-  </Box>
-);
+};
 
 export const CardGrid = ({ cards, onCardClick }) => (
-  <Stack d="inline-flex">
+  <Stack d="inline-flex" spacing={4}>
     {sliceRows(cards).map((row, rowI) => (
-      <HStack spacing={2}>
+      <HStack spacing={4} key={`${rowI}${row}`}>
         {row.map((cardValue, i) => (
-          <Card key={`${cardValue}${i}`} value={cardValue} onClick={evt => {
-            onCardClick((rowI + 1) * i, cardValue);
-          }} />
+          <Card
+            key={`${cardValue}${i}`}
+            value={cardValue}
+            disabled={!onCardClick}
+            onClick={() => {
+              if (onCardClick) {
+                onCardClick(rowI * 4 + i, cardValue);
+              }
+            }}
+          />
         ))}
       </HStack>
     ))}
