@@ -20,14 +20,14 @@ const omit = (keyedObj, key) => {
   return output;
 };
 
-const Spread = ({ cards = [], name, onCardClick, isActive }) => (
+const Spread = ({ cards = [], name, onCardClick, isActive, disabled }) => (
   <Box border="1px dotted" borderColor="grey" m={2} p={2}>
     <Box m={2}>
       <Text as={isActive ? "mark" : undefined} p={2} d="inline-block">
         {name}: ({addCards(cards)})
       </Text>
     </Box>
-    <CardGrid cards={cards} onCardClick={onCardClick} />
+    <CardGrid cards={cards} onCardClick={onCardClick} disabled={disabled} />
   </Box>
 );
 
@@ -39,6 +39,7 @@ const SpreadLayout = ({
   onCardClick,
   playerID,
   activePlayers,
+  disabled,
 }) => (
   <Box d="flex" mt={2}>
     <Spread
@@ -46,6 +47,7 @@ const SpreadLayout = ({
       name={name}
       cards={cards}
       onCardClick={onCardClick}
+      disabled={disabled}
     />
     {Object.entries(otherCards).map(([id, cards]) => (
       <Spread
@@ -72,8 +74,8 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const activePlayers = Object.keys(
     ctx.activePlayers || { [ctx.currentPlayer]: null }
   );
-
   const isActive = activePlayers.includes(playerID);
+  const activeStage = ctx.activePlayers?.[playerID];
 
   return (
     <Box textAlign="left" p={2}>
@@ -82,7 +84,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           <Text>Discard:</Text>
           <Card
             value={G.discard}
-            disabled={!isActive}
+            disabled={activeStage !== "chooseActive"}
             onClick={() => {
               moves.chooseDiscard();
             }}
@@ -91,7 +93,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
         <Box>
           <Text>Draw deck:</Text>
           <Card
-            disabled={!isActive}
+            disabled={activeStage !== "chooseActive"}
             value={HIDDEN_CARD}
             onClick={() => {
               moves.chooseRandom();
@@ -107,9 +109,9 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             />
           </Box>
           <Button
-            disabled={!(isActive && G.choseActive)}
+            disabled={activeStage !== 'discardOrSwap'}
             type="button"
-            onClick={() => moves.discardActive()}
+            onClick={() => moves.discard?.()}
           >
             Discard
           </Button>
@@ -146,8 +148,13 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           name={data.name}
           playerID={playerID}
           otherData={otherData}
+          disabled={!(activeStage === "swapOnly" || activeStage === "flipOver" || activeStage === "discardOrSwap")}
           onCardClick={(pos) => {
-            moves.activate(pos);
+            if (activeStage === "swapOnly" || activeStage === "discardOrSwap") {
+              moves.swap(pos);
+            } else if(activeStage === "flipOver") {
+              moves.flip(pos);
+            }
           }}
           otherCards={otherCards}
           activePlayers={activePlayers}

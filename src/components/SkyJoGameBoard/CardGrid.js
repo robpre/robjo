@@ -13,7 +13,7 @@ const sliceRows = (cards) => {
   return output;
 };
 
-export const CardGrid = ({ cards, onCardClick }) => (
+export const CardGrid = ({ cards, onCardClick, disabled }) => (
   <Stack d="inline-flex" spacing={4}>
     {sliceRows(cards).map((row, rowI) => (
       <HStack spacing={4} key={`${rowI}${row}`}>
@@ -21,7 +21,7 @@ export const CardGrid = ({ cards, onCardClick }) => (
           <Card
             key={`${cardValue}${i}`}
             value={cardValue}
-            disabled={!onCardClick}
+            disabled={disabled === true || !onCardClick}
             onClick={() => {
               if (onCardClick) {
                 onCardClick(rowI * 4 + i, cardValue);

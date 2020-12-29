@@ -24,3 +24,11 @@ export const deal = {
   },
   client: false,
 };
+
+export const startup = {
+  start: true,
+  moves: {
+    deal,
+  },
+  next: "reveal",
+};

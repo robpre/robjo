@@ -42,7 +42,7 @@ export const Card = ({ value, onClick = () => {}, disabled }) => (
     <VisuallyHidden>
       <button
         type="button"
-        disabled={disabled}
+        disabled={disabled ? "disabled": undefined}
         onClick={(evt) => {
           evt.stopPropagation();
           onClick(evt);
