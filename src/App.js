@@ -5,12 +5,14 @@ import { Global } from "@emotion/react";
 
 import { GameLobby } from "./components/GameLobby";
 import { SkyJoClient } from "./components/SkyJoClient";
+import { config } from "./config";
 
-const config = {
-  useSystemColorMode: false,
-  initialColorMode: "dark",
-}
-const theme = extendTheme({ config })
+const theme = extendTheme({
+  config: {
+    useSystemColorMode: false,
+    initialColorMode: "dark",
+  },
+});
 
 const DevGame = () => (
   <>
@@ -42,7 +44,7 @@ const DevGame = () => (
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      {process.env.NODE_ENV === "development" && (
+      {config.debugClient && (
         <Global styles={{ body: { marginRight: 305 } }} />
       )}
       <Box h="100%" textAlign="center" fontSize="xl">

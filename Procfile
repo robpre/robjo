@@ -1,1 +1,1 @@
-web: node -r esm index.js
+web: yarn start

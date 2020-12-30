@@ -1,14 +1,16 @@
-import React from "react";
+/** @jsxImportSource @emotion/react */
+import { useState } from "react";
 import {
   Box,
   Button,
-  HStack,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -17,6 +19,9 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import keyBy from "lodash.keyby";
 
@@ -24,6 +29,8 @@ import { CardGrid } from "./SkyJoGameBoard/CardGrid";
 import { SimpleRouter } from "./SimpleRouter";
 import { Card } from "./Card";
 import { addCards, EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
+import ScrollMenu from "react-horizontal-scrolling-menu";
+import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const makeMatcher = (needle) => ({ id }) => `${id}` === `${needle}`;
 const omit = (keyedObj, key) => {
@@ -49,8 +56,8 @@ const translations = {
     chooseActive:
       "Choose between the card on top of the discard pile and a random card from the top of the deck",
     discardOrSwap:
-      "Either discard the Selected Card or choose a card to swap with",
-    swapOnly: "Swap the Selected Card with one from your board",
+      "Either discard the Active Card or choose a card to swap with",
+    swapOnly: "Swap the Active Card with one from your board",
     flipOver: "Click on a card on the board to reveal its value",
   },
   endround: "Rounds finished! Ask the active player to restart the round and you'll be able to check the scores.",
@@ -79,7 +86,7 @@ const Spread = ({ cards = [], name, onCardClick, isActive, disabled }) => (
 );
 
 const SpreadLayout = ({
-  otherData,
+  otherMatches,
   otherCards,
   name,
   cards,
@@ -87,35 +94,67 @@ const SpreadLayout = ({
   playerID,
   activePlayers,
   disabled,
-}) => (
-  <Box d="flex" mt={2}>
+}) => {
+  const [selected, setSelected] = useState();
+  // const spreads = useMemo(() => {
+  const spreads = [
     <Spread
+      key={playerID}
       isActive={activePlayers.includes(playerID)}
       name={name}
       cards={cards}
       onCardClick={onCardClick}
       disabled={disabled}
-    />
-    {Object.entries(otherCards).map(([id, cards]) => (
+    />,
+    ...Object.entries(otherCards).map(([id, cards]) => (
       <Spread
-        key={`${id}${cards}`}
+        key={id}
         isActive={activePlayers.includes(id)}
-        name={otherData[id]?.name}
+        name={otherMatches[id]?.name}
         cards={cards}
       />
-    ))}
-  </Box>
-);
+    ))
+  ];
+  // }, [otherMatches, cards, name, disabled, activePlayers,]);
+
+  return (
+    <Box
+      css={{
+        ".scroll-menu-arrow": {
+          position: "absolute",
+          zIndex: 1,
+          right: 0,
+          ":first-of-type": {
+            left: 0,
+            right: "auto",
+          },
+        }
+      }}
+    >
+      <Button leftIcon={<ArrowLeftIcon />} aria-label="go to the first board" onClick={() => setSelected(playerID)}>First</Button>
+      <ScrollMenu
+        data={spreads}
+        scrollToSelected
+        useButtonRole={false}
+        onUpdate={console.log}
+        onSelect={key => setSelected(key)}
+        arrowLeft={<IconButton icon={<ChevronLeftIcon />} aria-label="go left one game board" />}
+        arrowRight={<IconButton icon={<ChevronRightIcon />} aria-label="go right one game board" />}
+        selected={selected}
+      />
+    </Box>
+  );
+};
 
 const ScoreModal = ({ onOpen, onClose, isOpen, scores, matchData }) => (
   <>
-    <Button onClick={onOpen}>Show scores</Button>
+    <Button colorScheme="blue" mb={2} onClick={onOpen}>Show scores</Button>
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay onClick={onClose} />
-      <ModalContent>
+      <ModalContent position="absolute" p={2}>
         <ModalHeader>Scores</ModalHeader>
         <ModalCloseButton />
-        <ModalBody p={2}>
+        <ModalBody>
           <Table variant="striped" colorScheme="grey">
             <Thead>
               <Tr>
@@ -161,7 +200,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const curPlayer = makeMatcher(playerID);
   const data = matchData.find(curPlayer) || {};
-  const otherData = keyBy(
+  const otherMatches = keyBy(
     matchData.filter((p) => !curPlayer(p)),
     ({ id }) => id
   );
@@ -174,65 +213,78 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const activeStage = ctx.activePlayers?.[playerID];
 
   return (
-    <Box textAlign="left" p={2} pl={0}>
-      <ScoreModal
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={onOpen}
-        scores={G.scores}
-        matchData={matchData}
-      />
-      <HStack spacing={4}>
-        <Box>
-          <Text>Discard:</Text>
-          <Card
-            value={G.discard}
-            disabled={activeStage !== "chooseActive"}
-            onClick={() => {
-              moves.chooseDiscard();
-            }}
-          />
-        </Box>
-        <Box>
-          <Text>Draw deck:</Text>
-          <Card
-            disabled={activeStage !== "chooseActive"}
-            value={HIDDEN_CARD}
-            onClick={() => {
-              moves.chooseRandom();
-            }}
-          />
-        </Box>
-        <HStack spacing={2}>
-          <Box>
-            <Text>Selected Card:</Text>
+    <Box pt={2} d="flex" flexDirection="column" w="fit-content" maxW="100%">
+      <VStack d="inline-flex" width="fit-content">
+        <ScoreModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpen={onOpen}
+          scores={G.scores}
+          matchData={matchData}
+          w="100%"
+        />
+        <Wrap spacing={2} w="fit-content" flexWrap="wrap">
+          <WrapItem>
+            <Stack>
+            <Text>Discard:</Text>
             <Card
-              value={G.phase !== "startup" ? G.active[playerID] : EMPTY_CARD}
+              value={G.discard}
+              disabled={activeStage !== "chooseActive"}
+              onClick={() => {
+                moves.chooseDiscard();
+              }}
+            />
+            </Stack>
+          </WrapItem>
+          <WrapItem>
+            <Stack>
+            <Text>Draw:</Text>
+            <Card
+              disabled={activeStage !== "chooseActive"}
+              value={HIDDEN_CARD}
+              onClick={() => {
+                moves.chooseRandom();
+              }}
+            />
+            </Stack>
+          </WrapItem>
+          <WrapItem>
+            <Stack>
+            <Text>Active:</Text>
+            <Card
+              value={G.active[playerID] ?? EMPTY_CARD}
               disabled
             />
-          </Box>
-          <Button
-            disabled={activeStage !== "discardOrSwap"}
-            type="button"
-            onClick={() => moves.discard?.()}
-          >
-            Discard
-          </Button>
-        </HStack>
-      </HStack>
+            </Stack>
+          </WrapItem>
+          <WrapItem>
+            <Stack justifyContent="center" minH="100%">
+              <Button
+                d="block"
+                colorScheme="blue"
+                disabled={activeStage !== "discardOrSwap"}
+                type="button"
+                onClick={() => moves.discard?.()}
+              >
+                Discard
+              </Button>
+            </Stack>
+          </WrapItem>
+        </Wrap>
+      </VStack>
       <Box mt={2} mb={2}>
         <NextStepDescription phase={ctx.phase} stage={activeStage} />
       </Box>
       <SimpleRouter phase={ctx.phase}>
         <Box route="startup" mt={4}>
           {isActive && (
-            <Button type="button" onClick={() => moves.deal()}>
+            <Button colorScheme="blue" type="button" onClick={() => moves.deal()}>
               Deal!
             </Button>
           )}
           {!isActive && (
             <Text>
-              Ask {otherData[ctx.currentPlayer]?.name} to deal the cards!
+              Ask {otherMatches[ctx.currentPlayer]?.name} to deal the cards!
             </Text>
           )}
         </Box>
@@ -241,7 +293,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           cards={cards}
           name={data.name}
           playerID={playerID}
-          otherData={otherData}
+          otherMatches={otherMatches}
           onCardClick={(pos) => {
             if (activeStage === "reveal2") {
               moves.reveal(pos);
@@ -255,7 +307,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           cards={cards}
           name={data.name}
           playerID={playerID}
-          otherData={otherData}
+          otherMatches={otherMatches}
           disabled={
             !(
               activeStage === "swapOnly" ||
@@ -278,7 +330,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           route="endround"
         >
           {isActive && (
-            <Button onClick={() => {
+            <Button colorScheme="blue" onClick={() => {
               moves.reset();
             }}>
               End round
@@ -289,7 +341,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             cards={cards}
             name={data.name}
             playerID={playerID}
-            otherData={otherData}
+            otherMatches={otherMatches}
             otherCards={otherCards}
             activePlayers={activePlayers}
           />

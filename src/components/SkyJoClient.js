@@ -2,6 +2,7 @@ import { Client } from "boardgame.io/react";
 import { SocketIO, Local } from "boardgame.io/multiplayer";
 import { SkyJo } from "../game/skyjo";
 import { SkyJoGameBoard } from "./SkyJoGameBoard";
+import { config } from "../config";
 
 const local = new Local({
   // persist: true,
@@ -14,13 +15,13 @@ const socket = new SocketIO({
 const LocalComponent = new Client({
   game: SkyJo,
   board: SkyJoGameBoard,
-  debug: process.env.NODE_ENV === "development",
+  debug: config.debugClient,
   multiplayer: local,
 });
 const RemoteComponent = new Client({
   game: SkyJo,
   board: SkyJoGameBoard,
-  debug: process.env.NODE_ENV === "development",
+  debug: config.debugClient,
   multiplayer: socket,
 });
 

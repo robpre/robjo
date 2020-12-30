@@ -13,7 +13,7 @@ server.app.use(staticServer('build'));
 server.app.use(async (ctx, next) => {
   await next();
 
-  if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return
+  if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return;
   // response is already handled
   if (ctx.body != null || ctx.status !== 404) return;
 
