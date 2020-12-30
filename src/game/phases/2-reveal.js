@@ -1,4 +1,4 @@
-import { TurnOrder } from "boardgame.io/core";
+import { TurnOrder, INVALID_MOVE } from "boardgame.io/core";
 import { addCards, HIDDEN_CARD } from "../cards";
 import { ssm } from "../ssm";
 
@@ -13,6 +13,9 @@ export const reveal = {
       reveal2: {
         moves: {
           reveal: ssm((G, ctx, i) => {
+            if (G.boards[ctx.playerID][i] !== HIDDEN_CARD) {
+              return INVALID_MOVE;
+            }
             G.boards[ctx.playerID][i] = G.secret.hands[ctx.playerID][i];
           }),
         },

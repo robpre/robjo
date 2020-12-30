@@ -28,7 +28,7 @@ const backgroundPicker = (value) => {
 
 export const Card = ({ value, onClick = () => {}, disabled }) => (
   <Box
-    onClick={onClick}
+    onClick={evt => { if (!disabled && onClick) { onClick(evt)} }}
     background={backgroundPicker(value)}
     borderRadius="15%"
     border="5px solid white"
@@ -45,7 +45,7 @@ export const Card = ({ value, onClick = () => {}, disabled }) => (
         disabled={disabled ? "disabled": undefined}
         onClick={(evt) => {
           evt.stopPropagation();
-          onClick(evt);
+          if (!disabled && onClick) { onClick(evt)}
         }}
       >
         click to select card with value
