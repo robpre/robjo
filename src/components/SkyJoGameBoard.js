@@ -130,7 +130,6 @@ const SpreadLayout = ({
         top="0"
         size="md"
         position="absolute"
-        transform="translateX(-50%)"
       />
       <Box
         ref={ref}
@@ -161,7 +160,6 @@ const SpreadLayout = ({
         position="absolute"
         top="0"
         right="0"
-        transform="translateX(50%)"
         size="md"
       />
     </Box>
