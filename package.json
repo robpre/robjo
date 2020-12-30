@@ -36,6 +36,7 @@
     "husky": "4.3.6",
     "lint-staged": "10.5.3",
     "lodash.keyby": "4.6.0",
+    "lodash.omit": "4.5.0",
     "nodemon": "2.0.6",
     "prettier": "2.2.1",
     "react": "17.0.1",
