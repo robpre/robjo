@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -95,8 +95,8 @@ const SpreadLayout = ({
   activePlayers,
   disabled,
 }) => {
-  const [selected, setSelected] = useState();
-  // const spreads = useMemo(() => {
+  const [selected, setSelected] = useState(playerID);
+  const ref = useRef();
   const spreads = [
     <Spread
       key={playerID}
@@ -115,7 +115,6 @@ const SpreadLayout = ({
       />
     ))
   ];
-  // }, [otherMatches, cards, name, disabled, activePlayers,]);
 
   return (
     <Box
@@ -131,13 +130,20 @@ const SpreadLayout = ({
         }
       }}
     >
-      <Button leftIcon={<ArrowLeftIcon />} aria-label="go to the first board" onClick={() => setSelected(playerID)}>First</Button>
+      <Button
+        leftIcon={<ArrowLeftIcon />}
+        aria-label="go to the first board"
+        onClick={() => {
+          setSelected(playerID);
+          ref.current?.scrollTo(playerID);
+        }}
+      >First</Button>
       <ScrollMenu
         data={spreads}
         scrollToSelected
         useButtonRole={false}
-        onUpdate={console.log}
         onSelect={key => setSelected(key)}
+        ref={ref}
         arrowLeft={<IconButton icon={<ChevronLeftIcon />} aria-label="go left one game board" />}
         arrowRight={<IconButton icon={<ChevronRightIcon />} aria-label="go right one game board" />}
         selected={selected}
