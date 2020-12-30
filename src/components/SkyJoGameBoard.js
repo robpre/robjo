@@ -31,7 +31,7 @@ import { Card } from "./Card";
 import { addCards, EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
-const makeMatcher = (needle) => ({ id }) => `${id}` === `${needle}`;
+// const makeMatcher = (needle) => ({ id }) => `${id}` === `${needle}`;
 
 // phase + client's stage
 const translations = {
@@ -220,7 +220,7 @@ const ScoreModal = ({ onOpen, onClose, isOpen, scores, matchData }) => (
 
 export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const curPlayer = makeMatcher(playerID);
+  // const curPlayer = makeMatcher(playerID);
   const matchKeyed = keyBy(
     matchData,
     ({ id }) => id
