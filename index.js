@@ -27,6 +27,7 @@ server.app.use(helmet({
     directives: {
       ...contentSecurityPolicy.getDefaultDirectives(),
       "script-src": ["'unsafe-inline'", "'self'"],
+      expectCt: false,
     },
   },
 }));
