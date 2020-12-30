@@ -23,7 +23,8 @@ server.app.use(async (ctx, next) => {
 server.app.use(staticServer('build', { defer: true }));
 
 server.app.use(helmet({
-  "expectCt": false,
+  // "expectCt": false,
+  hsts: false,
   contentSecurityPolicy: {
     directives: {
       ...contentSecurityPolicy.getDefaultDirectives(),
