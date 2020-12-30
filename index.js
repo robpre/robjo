@@ -26,6 +26,8 @@ server.app.use(helmet({
   "expectCt": false,
   hsts: false,
   contentSecurityPolicy: {
+    // use json to remove undefined
+    // so we remove upgrade-insecure-requests
     directives: JSON.parse(JSON.stringify({
       ...contentSecurityPolicy.getDefaultDirectives(),
       "script-src": ["'unsafe-inline'", "'self'"],
