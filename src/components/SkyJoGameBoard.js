@@ -106,7 +106,7 @@ const SpreadLayout = ({
         }
       }
     })
-  }
+  };
 
   return (
     <Box
