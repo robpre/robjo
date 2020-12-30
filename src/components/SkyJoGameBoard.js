@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useRef, useState } from "react";
+import { forwardRef, useRef } from "react";
 import {
   Box,
   Button,
@@ -29,21 +29,9 @@ import { CardGrid } from "./SkyJoGameBoard/CardGrid";
 import { SimpleRouter } from "./SimpleRouter";
 import { Card } from "./Card";
 import { addCards, EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
-import ScrollMenu from "react-horizontal-scrolling-menu";
 import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 
 const makeMatcher = (needle) => ({ id }) => `${id}` === `${needle}`;
-const omit = (keyedObj, key) => {
-  const output = {};
-
-  Object.entries(keyedObj).forEach(([k, v]) => {
-    if (`${key}` !== `${k}`) {
-      output[k] = v;
-    }
-  });
-
-  return output;
-};
 
 // phase + client's stage
 const translations = {
@@ -60,7 +48,7 @@ const translations = {
     swapOnly: "Swap the Active Card with one from your board",
     flipOver: "Click on a card on the board to reveal its value",
   },
-  endround: "Rounds finished! Ask the active player to restart the round and you'll be able to check the scores.",
+  endround: "Round's finished! Ask the active player to restart the round and you'll be able to check the scores.",
 };
 
 const NextStepDescription = ({ phase, stage }) => {
@@ -74,8 +62,8 @@ const NextStepDescription = ({ phase, stage }) => {
   );
 };
 
-const Spread = ({ cards = [], name, onCardClick, isActive, disabled }) => (
-  <Box border="1px dotted" borderColor="grey" m={2} p={2} ml="0">
+const Spread = forwardRef(({ cards = [], name, onCardClick, isActive, disabled, ...props }, ref) => (
+  <Box border="1px dotted" borderColor="grey" m={2} p={2} ml="0" {...props} ref={ref}>
     <Box m={2}>
       <Text as={isActive ? "mark" : undefined} p={2} d="inline-block">
         {name}: ({addCards(cards)})
@@ -83,70 +71,98 @@ const Spread = ({ cards = [], name, onCardClick, isActive, disabled }) => (
     </Box>
     <CardGrid cards={cards} onCardClick={onCardClick} disabled={disabled} />
   </Box>
-);
+));
 
 const SpreadLayout = ({
-  otherMatches,
-  otherCards,
-  name,
-  cards,
+  matchKeyed,
+  boards,
   onCardClick,
   playerID,
   activePlayers,
   disabled,
+  playOrder,
 }) => {
-  const [selected, setSelected] = useState(playerID);
   const ref = useRef();
-  const spreads = [
-    <Spread
-      key={playerID}
-      isActive={activePlayers.includes(playerID)}
-      name={name}
-      cards={cards}
-      onCardClick={onCardClick}
-      disabled={disabled}
-    />,
-    ...Object.entries(otherCards).map(([id, cards]) => (
-      <Spread
-        key={id}
-        isActive={activePlayers.includes(id)}
-        name={otherMatches[id]?.name}
-        cards={cards}
-      />
-    ))
-  ];
+  const playerIndex = playOrder.indexOf(playerID);
+  const renderOrder = [...playOrder.slice(playerIndex), ...playOrder.slice(0, playerIndex)];
+  const boardRefs = [];
+  const makeAssignRef = i => el => boardRefs[i] = el;
+
+  const move = dir => () => {
+    if (!ref.current || !boardRefs[0]) {
+      return;
+    }
+
+    const boardWidth = boardRefs[0].offsetWidth;
+
+    /* eslint-disable-next-line array-callback-return */
+    boardRefs.some((bRef, i) => {
+      if (bRef.offsetLeft <= (ref.current.scrollLeft)) {
+        if (bRef.offsetLeft + boardWidth >= (ref.current.scrollLeft)) {
+          if (boardRefs[i + dir]) {
+            ref.current.scrollTo((i + dir) * boardWidth, 0);
+            return true;
+          }
+        }
+      }
+    })
+  }
 
   return (
     <Box
-      css={{
-        ".scroll-menu-arrow": {
-          position: "absolute",
-          zIndex: 1,
-          right: 0,
-          ":first-of-type": {
-            left: 0,
-            right: "auto",
-          },
-        }
-      }}
+      position="relative"
     >
       <Button
+        colorScheme="blue"
         leftIcon={<ArrowLeftIcon />}
         aria-label="go to the first board"
+        top="0"
         onClick={() => {
-          setSelected(playerID);
-          ref.current?.scrollTo(playerID);
+          ref.current?.scrollTo(0, 0);
         }}
       >First</Button>
-      <ScrollMenu
-        data={spreads}
-        scrollToSelected
-        useButtonRole={false}
-        onSelect={key => setSelected(key)}
+      <IconButton
+        aria-label="go left one game board"
+        colorScheme="blue"
+        left="0"
+        icon={<ChevronLeftIcon />}
+        onClick={move(0)}
+        top="0"
+        size="md"
+        position="absolute"
+        transform="translateX(-50%)"
+      />
+      <Box
         ref={ref}
-        arrowLeft={<IconButton icon={<ChevronLeftIcon />} aria-label="go left one game board" />}
-        arrowRight={<IconButton icon={<ChevronRightIcon />} aria-label="go right one game board" />}
-        selected={selected}
+        d="flex"
+        overflow="auto"
+        flexWrap="nowrap"
+        style={{
+          scrollBehavior: "smooth",
+        }}
+      >
+        {renderOrder.map((id, i) => (
+          <Spread
+            key={id}
+            ref={makeAssignRef(i)}
+            isActive={activePlayers.includes(id)}
+            name={matchKeyed[id]?.name}
+            cards={boards[id]}
+            onCardClick={id === playerID ? onCardClick : undefined}
+            disabled={id === playerID ? disabled : true}
+          />
+        ))}
+      </Box>
+      <IconButton
+        onClick={move(1)}
+        colorScheme="blue"
+        icon={<ChevronRightIcon />}
+        aria-label="go right one game board"
+        position="absolute"
+        top="0"
+        right="0"
+        transform="translateX(50%)"
+        size="md"
       />
     </Box>
   );
@@ -205,13 +221,10 @@ const ScoreModal = ({ onOpen, onClose, isOpen, scores, matchData }) => (
 export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const curPlayer = makeMatcher(playerID);
-  const data = matchData.find(curPlayer) || {};
-  const otherMatches = keyBy(
-    matchData.filter((p) => !curPlayer(p)),
+  const matchKeyed = keyBy(
+    matchData,
     ({ id }) => id
   );
-  const cards = G.boards[playerID];
-  const otherCards = omit(G.boards, playerID);
   const activePlayers = Object.keys(
     ctx.activePlayers || { [ctx.currentPlayer]: null }
   );
@@ -219,8 +232,8 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const activeStage = ctx.activePlayers?.[playerID];
 
   return (
-    <Box pt={2} d="flex" flexDirection="column" w="fit-content" maxW="100%">
-      <VStack d="inline-flex" width="fit-content">
+    <Box pt={2} d="flex" flexDirection="column" maxW="100%">
+      <VStack d="inline-flex">
         <ScoreModal
           isOpen={isOpen}
           onClose={onClose}
@@ -229,7 +242,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           matchData={matchData}
           w="100%"
         />
-        <Wrap spacing={2} w="fit-content" flexWrap="wrap">
+        <Wrap spacing={2} flexWrap="wrap">
           <WrapItem>
             <Stack>
             <Text>Discard:</Text>
@@ -258,7 +271,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             <Stack>
             <Text>Active:</Text>
             <Card
-              value={G.active[playerID] ?? EMPTY_CARD}
+              value={G.active[ctx.currentPlayer] ?? EMPTY_CARD}
               disabled
             />
             </Stack>
@@ -290,30 +303,28 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           )}
           {!isActive && (
             <Text>
-              Ask {otherMatches[ctx.currentPlayer]?.name} to deal the cards!
+              Ask {matchKeyed[ctx.currentPlayer]?.name} to deal the cards!
             </Text>
           )}
         </Box>
         <SpreadLayout
+          playOrder={ctx.playOrder}
           route="reveal"
-          cards={cards}
-          name={data.name}
           playerID={playerID}
-          otherMatches={otherMatches}
+          matchKeyed={matchKeyed}
           onCardClick={(pos) => {
             if (activeStage === "reveal2") {
               moves.reveal(pos);
             }
           }}
-          otherCards={otherCards}
+          boards={G.boards}
           activePlayers={activePlayers}
         />
         <SpreadLayout
+          playOrder={ctx.playOrder}
           route="cycle"
-          cards={cards}
-          name={data.name}
           playerID={playerID}
-          otherMatches={otherMatches}
+          matchKeyed={matchKeyed}
           disabled={
             !(
               activeStage === "swapOnly" ||
@@ -329,7 +340,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
               moves.flip(pos);
             }
           }}
-          otherCards={otherCards}
+          boards={G.boards}
           activePlayers={activePlayers}
         />
         <Box
@@ -343,12 +354,11 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             </Button>
           )}
           <SpreadLayout
+            playOrder={ctx.playOrder}
             disabled
-            cards={cards}
-            name={data.name}
             playerID={playerID}
-            otherMatches={otherMatches}
-            otherCards={otherCards}
+            matchKeyed={matchKeyed}
+            boards={G.boards}
             activePlayers={activePlayers}
           />
         </Box>

@@ -15,7 +15,7 @@ const theme = extendTheme({
 });
 
 const DevGame = () => (
-  <>
+  <Box minH="100%">
     <Box m={4} p={4} border="1px solid" borderColor="maroon">
       <SkyJoClient
         localMode
@@ -38,7 +38,7 @@ const DevGame = () => (
         ]}
       />
     </Box>
-  </>
+  </Box>
 );
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
       {config.debugClient && (
         <Global styles={{ body: { marginRight: 305 } }} />
       )}
-      <Box h="100%" textAlign="center" fontSize="xl">
+      <Box overflow="hidden" textAlign="center" fontSize="xl">
         <Router>
           <GameLobby path="/*" />
           <DevGame path="/dev" />
