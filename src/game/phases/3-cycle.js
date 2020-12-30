@@ -2,23 +2,23 @@ import { TurnOrder } from "boardgame.io/core";
 import { EMPTY_CARD, HIDDEN_CARD } from "../cards";
 import { ssm } from "../ssm";
 
-const revealAllButOne = (G, ctx) => {
-  let skipped = 0;
-  Object.entries(G.boards).forEach(([id, cards]) => {
-    G.boards[id] = cards.map((oldVal, i) => {
-      if (oldVal !== HIDDEN_CARD) {
-        return oldVal;
-      }
+// const revealAllButOne = (G, ctx) => {
+//   let skipped = 0;
+//   Object.entries(G.boards).forEach(([id, cards]) => {
+//     G.boards[id] = cards.map((oldVal, i) => {
+//       if (oldVal !== HIDDEN_CARD) {
+//         return oldVal;
+//       }
 
-      if (skipped < 3 && ctx.currentPlayer!== id) {
-        skipped++;
-        return HIDDEN_CARD;
-      }
+//       if (skipped < 3 && ctx.currentPlayer!== id) {
+//         skipped++;
+//         return HIDDEN_CARD;
+//       }
 
-      return G.secret.hands[id][i];
-    })
-  });
-}
+//       return G.secret.hands[id][i];
+//     })
+//   });
+// }
 
 const swapActive = (G, ctx, i) => {
   const oldCard = G.secret.hands[ctx.playerID][i];
@@ -66,8 +66,10 @@ export const cycle = {
         if (G.playerFirstOut === ctx.currentPlayer) {
           const playersToReveal = {};
           ctx.playOrder.forEach(id => {
-            playersToReveal[id] = "endgameReveal";
-          })
+            if (G.playerFirstOut !== id) {
+              playersToReveal[id] = "endgameReveal";
+            }
+          });
 
           ctx.events.setActivePlayers({
             value: playersToReveal,
@@ -128,9 +130,9 @@ export const cycle = {
       },
     },
     onEnd: (G, ctx) => {
-      if (G.playerFirstOut === null) {
-        revealAllButOne(G, ctx);
-      }
+      // if (G.playerFirstOut === null) {
+      //   revealAllButOne(G, ctx);
+      // }
       // calculate columns of the same value
       disposeMatchingCol(G, ctx.currentPlayer);
 

@@ -53,10 +53,18 @@ const translations = {
     swapOnly: "Swap the Selected Card with one from your board",
     flipOver: "Click on a card on the board to reveal its value",
   },
+  endround: "Rounds finished! Ask the active player to restart the round and you'll be able to check the scores.",
 };
 
 const NextStepDescription = ({ phase, stage }) => {
-  return <Text d="block" minH="30px">{translations[phase]?.[stage]}</Text>;
+  const phaseObj = translations[phase];
+
+  return (
+    <Text d="block" minH="30px">
+      {typeof phaseObj === "string" && phaseObj}
+      {phaseObj?.[stage]}
+    </Text>
+  );
 };
 
 const Spread = ({ cards = [], name, onCardClick, isActive, disabled }) => (
