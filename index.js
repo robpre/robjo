@@ -23,15 +23,17 @@ server.app.use(async (ctx, next) => {
 server.app.use(staticServer('build', { defer: true }));
 
 server.app.use(helmet({
-  // "expectCt": false,
+  "expectCt": false,
   hsts: false,
   contentSecurityPolicy: {
-    directives: {
+    directives: JSON.parse(JSON.stringify({
       ...contentSecurityPolicy.getDefaultDirectives(),
       "script-src": ["'unsafe-inline'", "'self'"],
-    },
+      "upgrade-insecure-requests": undefined,
+    })),
   },
 }));
+
 server.run({
   port: PORT,
 }, () => console.log(`Server running on :${PORT}`))
