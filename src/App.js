@@ -1,10 +1,16 @@
 import React from "react";
-import { ChakraProvider, Box, theme } from "@chakra-ui/react";
+import { ChakraProvider, Box, extendTheme } from "@chakra-ui/react";
 import { Router } from "@reach/router";
 import { Global } from "@emotion/react";
 
 import { GameLobby } from "./components/GameLobby";
 import { SkyJoClient } from "./components/SkyJoClient";
+
+const config = {
+  useSystemColorMode: false,
+  initialColorMode: "dark",
+}
+const theme = extendTheme({ config })
 
 const DevGame = () => (
   <>

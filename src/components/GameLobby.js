@@ -3,7 +3,6 @@ import { Lobby } from "boardgame.io/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Button, HStack, Stack } from "@chakra-ui/react";
 import { SkyJo } from "../game/skyjo";
-import { ColourModeSwitcher } from "../ColourModeSwitcher";
 import { SkyJoGameBoard } from "./SkyJoGameBoard";
 import { SimpleRouter } from "./SimpleRouter";
 import { PhaseEnter } from "./GameLobby/PhaseEnter";
@@ -60,7 +59,7 @@ export const GameLobby = () => (
                 Exit lobby
               </Button>
             )}
-            <ColourModeSwitcher justifySelf="flex-end" />
+            {/* <ColourModeSwitcher justifySelf="flex-end" /> */}
           </HStack>
           <Stack flex="1" flexGrow="1">
             <SimpleRouter phase={phase}>
