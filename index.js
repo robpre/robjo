@@ -2,6 +2,7 @@ import { Server } from 'boardgame.io/server';
 import staticServer from 'koa-static';
 import helmet from 'koa-helmet';
 import { readFileSync } from 'fs';
+import { contentSecurityPolicy } from 'helmet';
 
 import { SkyJo } from './src/game/skyjo';
 
@@ -9,7 +10,6 @@ const PORT = process.env.PORT || 8000;
 
 const server = new Server({ games: [SkyJo], });
 
-server.app.use(staticServer('build'));
 server.app.use(async (ctx, next) => {
   await next();
 
@@ -20,8 +20,16 @@ server.app.use(async (ctx, next) => {
   ctx.type = 'html';
   ctx.body = readFileSync('./build/index.html');
 });
+server.app.use(staticServer('build', { defer: true }));
 
-server.app.use(helmet());
+server.app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'unsafe-inline'", "'self'"],
+    },
+  },
+}));
 server.run({
   port: PORT,
 }, () => console.log(`Server running on :${PORT}`))
