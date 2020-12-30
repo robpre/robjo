@@ -183,26 +183,26 @@ export const PhaseList = ({
       <Text pr={2} pl={2} textAlign="left">
         Join a match:
       </Text>
-      <Table>
+      <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>
-            <Th>game name</Th>
-            <Th>status</Th>
-            <Th>players</Th>
-            <Th>join</Th>
+            <Th textAlign="center" p={2}>game name</Th>
+            <Th textAlign="center" p={2}>status</Th>
+            <Th textAlign="center" p={2}>players</Th>
+            <Th textAlign="center" p={2}>join</Th>
           </Tr>
         </Thead>
         <Tbody>
           {matches.map((m) => (
             <Tr key={m.matchID}>
-              <Td>{m.gameName}</Td>
-              <Td>{m.players.find((p) => !p.name) ? "OPEN" : "RUNNING"}</Td>
-              <Td>
+              <Td p={2}>{m.gameName}</Td>
+              <Td p={2}>{m.players.find((p) => !p.name) ? "OPEN" : "RUNNING"}</Td>
+              <Td p={2}>
                 <Text>
                   {m.players.map((p) => p.name || "[free]").join(", ")}
                 </Text>
               </Td>
-              <Td>
+              <Td p={2}>
                 <MatchButton
                   match={m}
                   playerName={playerName}
