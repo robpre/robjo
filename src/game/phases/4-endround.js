@@ -24,7 +24,8 @@ export const endround = {
       score[playerID] = (lastScores[playerID] || 0) + s;
     });
 
-    score[G.playerFirstOut] = hasLowest ? firstOutScore : firstOutScore * 2;
+    score[G.playerFirstOut] = lastScores[G.playerFirstOut];
+    score[G.playerFirstOut] += hasLowest ? firstOutScore : (firstOutScore * 2);
 
     G.scores.push(score);
   },

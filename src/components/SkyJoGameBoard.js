@@ -100,7 +100,14 @@ const SpreadLayout = ({
       if (bRef.offsetLeft <= (ref.current.scrollLeft)) {
         if (bRef.offsetLeft + boardWidth >= (ref.current.scrollLeft)) {
           if (boardRefs[i + dir]) {
-            ref.current.scrollTo((i + dir) * boardWidth, 0);
+            let mod = dir;
+            // usually we need to go to the i'th element when going ltr
+            // but if we're exactly on the thing then forceable go back one
+            if (bRef.offsetLeft === ref.current.scrollLeft && dir === 0) {
+              mod = -1;
+            }
+
+            ref.current.scrollTo(boardRefs[i + mod].offsetLeft, 0);
             return true;
           }
         }
@@ -306,7 +313,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           )}
         </Box>
         <SpreadLayout
-          playOrder={ctx.playOrder}
+          playOrder={[...ctx.playOrder, ...ctx.playOrder]}
           route="reveal"
           playerID={playerID}
           matchKeyed={matchKeyed}
@@ -352,8 +359,8 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             </Button>
           )}
           <SpreadLayout
-            playOrder={ctx.playOrder}
             disabled
+            playOrder={ctx.playOrder}
             playerID={playerID}
             matchKeyed={matchKeyed}
             boards={G.boards}
