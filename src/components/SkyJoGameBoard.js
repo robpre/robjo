@@ -313,7 +313,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           )}
         </Box>
         <SpreadLayout
-          playOrder={[...ctx.playOrder, ...ctx.playOrder]}
+          playOrder={ctx.playOrder}
           route="reveal"
           playerID={playerID}
           matchKeyed={matchKeyed}
