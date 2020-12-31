@@ -20,7 +20,7 @@ server.app.use(async (ctx, next) => {
   ctx.type = 'html';
   ctx.body = readFileSync('./build/index.html');
 });
-server.app.use(staticServer('build', { defer: true }));
+server.app.use(staticServer('build', { defer: true, hidden: true, }));
 
 server.app.use(helmet({
   "expectCt": false,
