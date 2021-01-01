@@ -17,7 +17,7 @@ export const SkyJo = {
 
     return Object.entries(lastScore).some(([playerID, score]) => {
       return score >= 100;
-    })
+    });
   },
   turn: {
     order: TurnOrder.CONTINUE,

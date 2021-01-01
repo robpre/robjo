@@ -52,12 +52,13 @@ const disposeMatchingCol = (G, playerID) => {
       }
     }
   }
-}
+};
 
 export const cycle = {
-  endIf: (G, ctx) => Object.entries(G.boards).every(([playerID, cards]) =>
-    cards.every((v) => v !== HIDDEN_CARD)
-  ),
+  endIf: (G, ctx) =>
+    Object.entries(G.boards).every(([playerID, cards]) =>
+      cards.every((v) => v !== HIDDEN_CARD)
+    ),
   next: "endround",
   turn: {
     order: TurnOrder.CONTINUE,
@@ -65,7 +66,7 @@ export const cycle = {
       if (G.playerFirstOut !== null) {
         if (G.playerFirstOut === ctx.currentPlayer) {
           const playersToReveal = {};
-          ctx.playOrder.forEach(id => {
+          ctx.playOrder.forEach((id) => {
             if (G.playerFirstOut !== id) {
               playersToReveal[id] = "endgameReveal";
             }
@@ -78,19 +79,28 @@ export const cycle = {
         }
       }
 
-      ctx.events.setActivePlayers({ moveLimit: 1, currentPlayer: "chooseActive" });
+      ctx.events.setActivePlayers({
+        moveLimit: 1,
+        currentPlayer: "chooseActive",
+      });
     },
     stages: {
       chooseActive: {
         moves: {
           chooseRandom: ssm((G, ctx) => {
             G.active[ctx.playerID] = G.secret.deck.pop();
-            ctx.events.setActivePlayers({ moveLimit: 1, currentPlayer: "discardOrSwap" });
+            ctx.events.setActivePlayers({
+              moveLimit: 1,
+              currentPlayer: "discardOrSwap",
+            });
           }),
           chooseDiscard: ssm((G, ctx) => {
             G.active[ctx.playerID] = G.discard;
             G.discard = EMPTY_CARD;
-            ctx.events.setActivePlayers({ moveLimit: 1, currentPlayer: "swapOnly" });
+            ctx.events.setActivePlayers({
+              moveLimit: 1,
+              currentPlayer: "swapOnly",
+            });
           }),
         },
       },
@@ -100,7 +110,10 @@ export const cycle = {
           discard: ssm((G, ctx) => {
             G.discard = G.active[ctx.playerID];
             G.active[ctx.playerID] = EMPTY_CARD;
-            ctx.events.setActivePlayers({ moveLimit: 1, currentPlayer: "flipOver" });
+            ctx.events.setActivePlayers({
+              moveLimit: 1,
+              currentPlayer: "flipOver",
+            });
           }),
         },
       },
@@ -112,8 +125,7 @@ export const cycle = {
       flipOver: {
         moves: {
           flip: ssm((G, ctx, i) => {
-            G.boards[ctx.playerID][i] =
-              G.secret.hands[ctx.playerID][i];
+            G.boards[ctx.playerID][i] = G.secret.hands[ctx.playerID][i];
             ctx.events.endTurn();
           }),
         },
@@ -121,8 +133,7 @@ export const cycle = {
       endgameReveal: {
         moves: {
           flip: ssm((G, ctx, i) => {
-            G.boards[ctx.playerID][i] =
-              G.secret.hands[ctx.playerID][i];
+            G.boards[ctx.playerID][i] = G.secret.hands[ctx.playerID][i];
 
             disposeMatchingCol(G, ctx.playerID);
           }),
@@ -143,4 +154,4 @@ export const cycle = {
       }
     },
   },
-}
+};

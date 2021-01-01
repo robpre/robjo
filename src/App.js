@@ -12,6 +12,13 @@ const theme = extendTheme({
     useSystemColorMode: false,
     initialColorMode: "dark",
   },
+  components: {
+    Button: {
+      defaultProps: {
+        colorScheme: "blue",
+      },
+    },
+  },
 });
 
 const DevGame = () => (
@@ -44,9 +51,7 @@ const DevGame = () => (
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      {config.debugClient && (
-        <Global styles={{ body: { marginRight: 305 } }} />
-      )}
+      {config.debugClient && <Global styles={{ body: { marginRight: 305 } }} />}
       <Box overflow="hidden" textAlign="center" fontSize="xl">
         <Router>
           <GameLobby path="/*" />

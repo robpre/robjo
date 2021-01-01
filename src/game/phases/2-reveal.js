@@ -45,7 +45,6 @@ export const reveal = {
         }
       );
 
-      console.log("setting next player to ", next);
       return { next };
     },
     onEnd: (G, ctx) => {

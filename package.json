@@ -1,5 +1,5 @@
 {
-  "name": "skyjo",
+  "name": "robjo",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Rob Preus-MacLaren <robpremac@gmail.com>",
@@ -17,9 +17,9 @@
   "dependencies": {
     "boardgame.io": "0.42.2",
     "esm": "3.2.25",
-    "lodash.omit": "4.5.0",
     "koa-helmet": "6.0.0",
-    "koa-static": "5.0.0"
+    "koa-static": "5.0.0",
+    "lodash.omit": "4.5.0"
   },
   "devDependencies": {
     "@chakra-ui/icons": "1.0.2",
@@ -37,6 +37,7 @@
     "husky": "4.3.6",
     "lint-staged": "10.5.3",
     "lodash.keyby": "4.6.0",
+    "lodash.throttle": "4.1.1",
     "nodemon": "2.0.6",
     "prettier": "2.2.1",
     "react": "17.0.1",
@@ -52,7 +53,9 @@
     ]
   },
   "husky": {
-    "pre-commit": "lint-staged"
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.js": [
