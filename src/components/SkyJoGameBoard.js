@@ -20,9 +20,9 @@ import { Card } from "./Card";
 import { EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
 import { SpreadLayout } from "./GameLobby/SpreadLayout";
 import { ScoreModal } from "./GameLobby/ScoreModal";
-import { QuestionIcon } from "@chakra-ui/icons";
+import { DeleteIcon, QuestionIcon } from "@chakra-ui/icons";
 import { getContent } from "./GameLobby/getContent";
-import { ripple } from "../keyframes/ripple";
+import { ripple, rippleBoxShadow } from "../keyframes/ripple";
 
 export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,10 +72,11 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
         <Wrap
           spacing={2}
           flexWrap="wrap"
+          borderRadius="5px"
           p={2}
-          animation={
+          boxShadow={
             activeStage === "chooseActive" || activeStage === "discardOrSwap"
-              ? `${ripple} 2s infinite`
+              ? `inset ${rippleBoxShadow}`
               : undefined
           }
         >
@@ -116,7 +117,13 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
             <Stack justifyContent="center" minH="100%">
               <Button
                 d="block"
+                animation={
+                  activeStage === "discardOrSwap"
+                    ? `${ripple} 2s infinite`
+                    : undefined
+                }
                 disabled={activeStage !== "discardOrSwap"}
+                rightIcon={<DeleteIcon />}
                 type="button"
                 onClick={() => moves.discard?.()}
               >

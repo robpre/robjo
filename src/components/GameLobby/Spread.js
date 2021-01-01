@@ -2,15 +2,16 @@ import { forwardRef } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { CardGrid } from "../SkyJoGameBoard/CardGrid";
 import { addCards } from "../../game/cards";
-import { inwardRipple } from "../../keyframes/ripple";
+import { rippleBoxShadow } from "../../keyframes/ripple";
 
 export const Spread = forwardRef(
   ({ cards = [], name, onCardClick, isActive, disabled, ...props }, ref) => (
     <Box
+      borderRadius="5px"
       borderStyle="dotted"
       borderWidth="2px"
       borderColor={disabled ? "gray.100" : "yellow.600"}
-      animation={!disabled ? `${inwardRipple} 2s infinite` : undefined}
+      boxShadow={!disabled ? `inset ${rippleBoxShadow}` : undefined}
       m={2}
       p={2}
       ml="0"
