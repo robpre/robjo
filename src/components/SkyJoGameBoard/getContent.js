@@ -29,7 +29,7 @@ const tips = {
     undefined: "Keep an eye out for who's going out first",
     // chooseActive: "",
     discardOrSwap:
-      "Being out first isn't always the best! If you don't have the lowest score it will be doubled at the end of the round",
+      "Being out first isn't always the best! If you go out first and you don't have the lowest score it will be doubled at the end of the round",
     // swapOnly: "Swap the Active Card with one from your board",
     // flipOver: "Click on a card on the board to reveal its value",
     // endgameReveal: "Now everyone needs to reveal their remaining cards",

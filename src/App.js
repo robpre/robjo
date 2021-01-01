@@ -1,5 +1,5 @@
 import React from "react";
-import { ChakraProvider, Box, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, Box, extendTheme, chakra } from "@chakra-ui/react";
 import { Router } from "@reach/router";
 import { Global } from "@emotion/react";
 
@@ -7,10 +7,26 @@ import { GameLobby } from "./components/GameLobby";
 import { SkyJoClient } from "./components/SkyJoClient";
 import { config } from "./config";
 
+const ChakraRouter = chakra(Router);
+
 const theme = extendTheme({
   config: {
     useSystemColorMode: false,
     initialColorMode: "dark",
+  },
+  colors: {
+    darkPurple: {
+      50: "#D6E9ED",
+      100: "#AEC7D9",
+      200: "#8799C5",
+      300: "#6162B0",
+      400: "#553C9A",
+      500: "#5A368E",
+      600: "#5D3082",
+      700: "#5F2B76",
+      800: "#5C205D",
+      900: "#501B4A",
+    },
   },
   components: {
     Button: {
@@ -52,11 +68,18 @@ function App() {
   return (
     <ChakraProvider theme={theme}>
       {config.debugClient && <Global styles={{ body: { marginRight: 305 } }} />}
-      <Box overflow="hidden" textAlign="center" fontSize="xl">
-        <Router>
+      <Box
+        overflow="hidden"
+        textAlign="center"
+        fontSize="xl"
+        d="flex"
+        flexDir="column"
+        minH="100%"
+      >
+        <ChakraRouter d="flex" flexDir="column" minH="100%">
           <GameLobby path="/*" />
           <DevGame path="/dev" />
-        </Router>
+        </ChakraRouter>
       </Box>
     </ChakraProvider>
   );

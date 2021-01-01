@@ -78,7 +78,7 @@ const LobbyCreateMatchForm = ({ games, onCreateMatch }) => {
       </HStack>
 
       <Box>
-        <Button p={4} pt={2} pb={2} colorScheme="pink" type="submit">
+        <Button p={4} pt={2} pb={2} colorScheme="darkPurple" type="submit">
           Create a new game!
         </Button>
       </Box>

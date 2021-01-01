@@ -46,15 +46,17 @@ export const GameLobby = () => (
                 onClick={handleExitMatch}
                 type="button"
                 rightIcon={<CloseIcon />}
+                colorScheme="darkPurple"
               >
                 Exit game
               </Button>
             )}
-            {phase !== LobbyPhases.ENTER && (
+            {phase !== LobbyPhases.ENTER && phase !== LobbyPhases.PLAY && (
               <Button
                 onClick={handleExitLobby}
                 type="button"
                 rightIcon={<CloseIcon />}
+                colorScheme="darkPurple"
               >
                 Exit lobby
               </Button>
