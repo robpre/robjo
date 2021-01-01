@@ -39,7 +39,7 @@ export const GameLobby = () => (
       handleStartMatch,
     }) => (
       <>
-        <Stack minHeight="100%" flex="1">
+        <Stack h="100%" flex="1">
           <HStack spacing={2} w="100%" justifyContent="flex-end" p={1}>
             {phase === LobbyPhases.PLAY && (
               <Button
@@ -47,6 +47,8 @@ export const GameLobby = () => (
                 type="button"
                 rightIcon={<CloseIcon />}
                 colorScheme="darkPurple"
+                _active={{ color: "gray.100" }}
+                _hover={{ color: "gray.100" }}
               >
                 Exit game
               </Button>
@@ -57,6 +59,8 @@ export const GameLobby = () => (
                 type="button"
                 rightIcon={<CloseIcon />}
                 colorScheme="darkPurple"
+                _active={{ color: "gray.100" }}
+                _hover={{ color: "gray.100" }}
               >
                 Exit lobby
               </Button>

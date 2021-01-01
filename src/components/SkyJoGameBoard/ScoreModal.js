@@ -26,7 +26,7 @@ export const ScoreModal = ({ onOpen, onClose, isOpen, scores, matchData }) => (
         <ModalHeader>Scores</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Table variant="striped" colorScheme="grey">
+          <Table variant="striped" colorScheme="gray">
             <Thead>
               <Tr>
                 <Th>

@@ -39,7 +39,12 @@ export const PhaseEnter = ({ playerName, onEnter }) => {
           />
         </FormControl>
 
-        <Button colorScheme="darkPurple" type="submit">
+        <Button
+          colorScheme="darkPurple"
+          type="submit"
+          _active={{ color: "gray.100" }}
+          _hover={{ color: "gray.100" }}
+        >
           Submit
         </Button>
       </HStack>

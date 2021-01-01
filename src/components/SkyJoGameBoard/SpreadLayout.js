@@ -85,7 +85,7 @@ export const SpreadLayout = ({
   };
 
   return (
-    <Box position="relative">
+    <Box position="relative" overflow="hidden">
       {!(goToFirstDisabled && goRightDisabled) && (
         <Box d="flex" justifyContent="space-between">
           {renderOrder.length > 2 && (

@@ -18,6 +18,8 @@ import {
   Th,
   Thead,
   Tr,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 
 const makeRange = (min, max) => {
@@ -78,7 +80,15 @@ const LobbyCreateMatchForm = ({ games, onCreateMatch }) => {
       </HStack>
 
       <Box>
-        <Button p={4} pt={2} pb={2} colorScheme="darkPurple" type="submit">
+        <Button
+          p={4}
+          pt={2}
+          pb={2}
+          colorScheme="darkPurple"
+          type="submit"
+          _active={{ color: "gray.100" }}
+          _hover={{ color: "gray.100" }}
+        >
           Create a new game!
         </Button>
       </Box>
@@ -124,21 +134,23 @@ const MatchButton = ({
   // match is full
   if (playerSeat) {
     return (
-      <HStack spacing={4}>
-        <Button
-          type="button"
-          onClick={() =>
-            onClickPlay(match.gameName, {
-              matchID: match.matchID,
-              playerID: "" + playerSeat.id,
-              numPlayers: match.players.length,
-            })
-          }
-        >
-          Play
-        </Button>
-        {leaveButton}
-      </HStack>
+      <Wrap spacing={4}>
+        <WrapItem>
+          <Button
+            type="button"
+            onClick={() =>
+              onClickPlay(match.gameName, {
+                matchID: match.matchID,
+                playerID: "" + playerSeat.id,
+                numPlayers: match.players.length,
+              })
+            }
+          >
+            Play
+          </Button>
+        </WrapItem>
+        <WrapItem>{leaveButton}</WrapItem>
+      </Wrap>
     );
   }
   // allow spectating
@@ -167,34 +179,55 @@ export const PhaseList = ({
   onClickJoin,
   onClickPlay,
 }) => (
-  <Stack spacing={2} justifyContent="space-between" flex="1">
-    <Stack spacing={2}>
-      <Heading as="h2" size="l">
-        Game list
-      </Heading>
-      <Box pr={2} pl={2}>
-        <Text textAlign="left">Create a match:</Text>
-        <LobbyCreateMatchForm
-          games={gameComponents}
-          onCreateMatch={(x, y) => onCreateMatch(x, y)}
-        />
-      </Box>
-      <Divider mr={2} ml={2} spacing={2} />
-      <Text pr={2} pl={2} textAlign="left">
-        Join a match:
-      </Text>
-      <Table variant="striped" colorScheme="teal">
+  <Stack
+    spacing={2}
+    justifyContent="space-between"
+    flex="1"
+    position="relative"
+  >
+    <Stack spacing={2} h="100%">
+      <Stack spacing={2}>
+        <Heading as="h2" size="l">
+          Game list
+        </Heading>
+        <Box pr={2} pl={2}>
+          <Text textAlign="left">Create a match:</Text>
+          <LobbyCreateMatchForm
+            games={gameComponents}
+            onCreateMatch={(x, y) => onCreateMatch(x, y)}
+          />
+        </Box>
+        <Divider mr={2} ml={2} spacing={2} />
+        <Text pr={2} pl={2} textAlign="left">
+          Join a match:
+        </Text>
+      </Stack>
+      <Table
+        variant="striped"
+        overflow="auto"
+        flexGrow="1"
+        minH="0"
+        colorScheme="teal"
+      >
         <Thead>
           <Tr>
-            <Th p={2}>game name</Th>
-            <Th p={2}>status</Th>
-            <Th p={2}>players</Th>
-            <Th p={2}>join</Th>
+            <Th position="sticky" p={2}>
+              game name
+            </Th>
+            <Th position="sticky" p={2}>
+              status
+            </Th>
+            <Th position="sticky" p={2}>
+              players
+            </Th>
+            <Th position="sticky" p={2}>
+              join
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
           {matches.map((m) => (
-            <Tr key={JSON.stringify(m)}>
+            <Tr key={m.matchID}>
               <Td p={2}>{m.gameName}</Td>
               <Td p={2}>
                 {m.players.find((p) => !p.name) ? "OPEN" : "RUNNING"}

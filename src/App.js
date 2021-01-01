@@ -39,7 +39,7 @@ const theme = extendTheme({
 
 const DevGame = () => (
   <Box minH="100%">
-    <Box m={4} p={4} border="1px solid" borderColor="maroon">
+    <Box border="1px solid maroon">
       <SkyJoClient
         localMode
         gameID="devgame"
@@ -50,7 +50,7 @@ const DevGame = () => (
         ]}
       />
     </Box>
-    <Box m={4} p={4} border="1px solid" borderColor="maroon">
+    <Box border="1px solid maroon">
       <SkyJoClient
         localMode
         gameID="devgame"
@@ -76,15 +76,8 @@ function App() {
           }}
         />
       )}
-      <Box
-        overflow="hidden"
-        textAlign="center"
-        fontSize="xl"
-        d="flex"
-        flexDir="column"
-        minH="100%"
-      >
-        <ChakraRouter d="flex" flexDir="column" minH="100%">
+      <Box textAlign="center" fontSize="xl" d="flex" flexDir="column" h="100%">
+        <ChakraRouter d="flex" flexDir="column" h="100%">
           <GameLobby path="/*" />
           <DevGame path="/dev" />
         </ChakraRouter>
