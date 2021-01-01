@@ -43,7 +43,7 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   });
 
   return (
-    <Box pt={2} d="flex" flexDirection="column" maxW="100%">
+    <Box p={1} pt={2} d="flex" flexDirection="column" maxW="100%">
       <VStack d="inline-flex">
         <HStack w="100%" justifyContent="flex-end">
           <ScoreModal

@@ -186,23 +186,15 @@ export const PhaseList = ({
       <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>
-            <Th textAlign="center" p={2}>
-              game name
-            </Th>
-            <Th textAlign="center" p={2}>
-              status
-            </Th>
-            <Th textAlign="center" p={2}>
-              players
-            </Th>
-            <Th textAlign="center" p={2}>
-              join
-            </Th>
+            <Th p={2}>game name</Th>
+            <Th p={2}>status</Th>
+            <Th p={2}>players</Th>
+            <Th p={2}>join</Th>
           </Tr>
         </Thead>
         <Tbody>
           {matches.map((m) => (
-            <Tr key={m.matchID}>
+            <Tr key={JSON.stringify(m)}>
               <Td p={2}>{m.gameName}</Td>
               <Td p={2}>
                 {m.players.find((p) => !p.name) ? "OPEN" : "RUNNING"}

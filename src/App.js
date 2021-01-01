@@ -67,7 +67,15 @@ const DevGame = () => (
 function App() {
   return (
     <ChakraProvider theme={theme}>
-      {config.debugClient && <Global styles={{ body: { marginRight: 305 } }} />}
+      {config.debugClient ? (
+        <Global styles={{ body: { marginRight: 305 } }} />
+      ) : (
+        <Global
+          styles={{
+            "body section.debug-panel.debug-panel": { display: "none" },
+          }}
+        />
+      )}
       <Box
         overflow="hidden"
         textAlign="center"
