@@ -18,23 +18,29 @@ import keyBy from "lodash.keyby";
 import { SimpleRouter } from "./SimpleRouter";
 import { Card } from "./Card";
 import { EMPTY_CARD, HIDDEN_CARD } from "../game/cards";
-import { SpreadLayout } from "./GameLobby/SpreadLayout";
-import { ScoreModal } from "./GameLobby/ScoreModal";
+import { SpreadLayout } from "./SkyJoGameBoard/SpreadLayout";
+import { ScoreModal } from "./SkyJoGameBoard/ScoreModal";
 import { DeleteIcon, QuestionIcon } from "@chakra-ui/icons";
-import { getContent } from "./GameLobby/getContent";
+import { getContent } from "./SkyJoGameBoard/getContent";
 import { ripple, rippleBoxShadow } from "../keyframes/ripple";
 
 export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: helpIsOpen, onToggle: onToggleHelp } = useDisclosure();
-  // const curPlayer = makeMatcher(playerID);
   const matchKeyed = keyBy(matchData, ({ id }) => id);
   const activePlayers = Object.keys(
     ctx.activePlayers || { [ctx.currentPlayer]: null }
   );
   const isActive = activePlayers.includes(playerID);
   const activeStage = ctx.activePlayers?.[playerID];
-  const content = getContent({ phase: ctx.phase, stage: activeStage });
+  const activePlayerName = matchData.find(
+    ({ id }) => `${id}` === `${ctx.currentPlayer}`
+  )?.name;
+  const content = getContent({
+    phase: ctx.phase,
+    stage: activeStage,
+    activePlayerName,
+  });
 
   return (
     <Box pt={2} d="flex" flexDirection="column" maxW="100%">
@@ -62,18 +68,21 @@ export const SkyJoGameBoard = ({ G, ctx, matchData = [], moves, playerID }) => {
           animateOpacity
           w="100%"
         >
-          <Box color="white" bg="blue.500" rounded="md" shadow="md">
-            <Alert status="info">
-              <AlertIcon />
-              {content}
-            </Alert>
-          </Box>
+          <Stack spacing={2}>
+            {content.map((s) => (
+              <Alert key={s} status="info" borderRadius="5px">
+                <AlertIcon />
+                <Text fontSize="md">{s}</Text>
+              </Alert>
+            ))}
+          </Stack>
         </Collapse>
         <Wrap
           spacing={2}
           flexWrap="wrap"
           borderRadius="5px"
           p={2}
+          justifyContent="center"
           boxShadow={
             activeStage === "chooseActive" || activeStage === "discardOrSwap"
               ? `inset ${rippleBoxShadow}`
