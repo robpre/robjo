@@ -7,6 +7,7 @@ import { SkyJoGameBoard } from "./SkyJoGameBoard";
 import { SimpleRouter } from "./SimpleRouter";
 import { PhaseEnter } from "./GameLobby/PhaseEnter";
 import { PhaseList } from "./GameLobby/PhaseList";
+import { GoMarkGithub } from "react-icons/go";
 
 const LobbyPhases = {
   ENTER: "enter",
@@ -64,6 +65,17 @@ export const GameLobby = () => (
               >
                 Exit lobby
               </Button>
+            )}
+            {phase !== LobbyPhases.PLAY && (
+              <Button
+                target="_blank"
+                as="a"
+                href="https://github.com/robpre/robjo"
+                size="lg"
+                rightIcon={<GoMarkGithub />}
+                variant="outline"
+                children="Edit me"
+              />
             )}
             {/* <ColourModeSwitcher justifySelf="flex-end" /> */}
           </HStack>
